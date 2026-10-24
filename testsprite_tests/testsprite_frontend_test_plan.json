@@ -1,0 +1,34 @@
+{
+  "suite": "AetherWeave Frontend Visual & DOM Synchronization Verification",
+  "framework": "TestSprite Chromium Cloud Runner v4.2",
+  "target": "AetherWeave Visual Dashboard",
+  "execution_mode": "observable_state_assertion",
+  "test_scenarios": [
+    {
+      "id": "TC004",
+      "title": "DOM React State Synchronization Post 5000ms Delayed Webhook",
+      "description": "Validates that when a delayed webhook is ingested and later dispatched, client-side SWR/polling hooks refresh the Event Timeline, updating the status badge from pending to success without missed React onChange or stale closure desynchronization.",
+      "steps": [
+        { "action": "navigate", "target": "/" },
+        { "action": "assert_visible", "selector": "[data-testid='timeline-heading']" },
+        { "action": "dispatch_webhook_simulation", "endpoint_slug": "preview-test-slug", "delay_ms": 5000 },
+        { "action": "assert_visible", "selector": ".status-pending", "timeout_ms": 2000 },
+        { "action": "wait_for_condition", "selector": ".status-success", "timeout_ms": 8000 },
+        { "action": "assert_dom_text", "selector": "[data-testid='delivery-rate']", "condition": "contains_percentage" }
+      ]
+    },
+    {
+      "id": "TC005",
+      "title": "Interactive Chaos Configuration Panel Real-time Mutation",
+      "description": "Asserts that adjusting the Latency Slider (ms) and Drop Probability Slider (%) dynamically mutates the active endpoint chaos profile, persists via PATCH /api/endpoints/[id], and immediately updates the Visual Flow Map circuit topology.",
+      "steps": [
+        { "action": "click", "selector": "button:has-text('Chaos Configuration')" },
+        { "action": "slide_input", "selector": "input[type='range'][max='5000']", "target_value": 3500 },
+        { "action": "toggle_checkbox", "selector": "input[type='checkbox']", "checked": true },
+        { "action": "click", "selector": "button:has-text('Apply')" },
+        { "action": "assert_dom_attribute", "selector": ".neon-border-cyan", "exists": true },
+        { "action": "assert_dom_text", "selector": ".text-amber-400", "expected": "3500ms" }
+      ]
+    }
+  ]
+}

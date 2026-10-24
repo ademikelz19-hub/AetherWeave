@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model WebhookEndpoint {
+  id           String         @id @default(cuid())
+  name         String
+  slug         String         @unique
+  targetUrl    String
+  chaosProfile String         @default("{\"latencyMs\":0,\"dropProb\":0,\"duplicate\":false,\"scramble\":false}")
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  events       EventPayload[]
+}
+
+model EventPayload {
+  id          String            @id @default(cuid())
+  endpointId  String
+  endpoint    WebhookEndpoint   @relation(fields: [endpointId], references: [id], onDelete: Cascade)
+  headers     String            @default("{}") // JSON string
+  body        String            // raw JSON body string
+  receivedAt  DateTime          @default(now())
+  attempts    DeliveryAttempt[]
+}
+
+model DeliveryAttempt {
+  id          String        @id @default(cuid())
+  payloadId   String
+  payload     EventPayload  @relation(fields: [payloadId], references: [id], onDelete: Cascade)
+  status      String        // "pending" | "success" | "failed" | "dropped"
+  latencyMs   Int
+  duplicate   Boolean       @default(false)
+  scrambled   Boolean       @default(false)
+  createdAt   DateTime      @default(now())
+  completedAt DateTime?
+}
