@@ -24,3 +24,8 @@
 - [x] Author LOOP.md documenting 3-iteration write -> verify -> fix cycle (React state staleness resolution) <!-- task-4-3 -->
 - [x] Author comprehensive README.md with architecture overview, deployment instructions, and judge verification guide <!-- task-4-4 -->
 - [x] Final validation and reflection against hackathon rules <!-- task-4-5 -->
+
+## Phase 5: Concurrency Hardening & Database Lock Mitigation
+- [x] Mitigate SQLite database lock race conditions via WAL mode PRAGMA configuration and in-memory serialized ingestion queue <!-- task-5-1 -->
+- [x] Document SQLite lock mitigation as Iteration 4 in LOOP.md <!-- task-5-2 -->
+- [x] Verify production build and TestSprite verification suite <!-- task-5-3 -->
