@@ -11,10 +11,10 @@ interface Props {
 
 export function CreateEndpointModal({ onClose, onCreated }: Props) {
   const [name, setName] = useState("");
-  const [targetUrl, setTargetUrl] = useState("https://httpbin.org/post");
-  const [latencyMs, setLatencyMs] = useState(500);
+  const [targetUrl, setTargetUrl] = useState("/api/sink");
+  const [latencyMs, setLatencyMs] = useState(1500);
   const [dropProb, setDropProb] = useState(0);
-  const [duplicate, setDuplicate] = useState(false);
+  const [duplicate, setDuplicate] = useState(true);
   const [scramble, setScramble] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -25,11 +25,19 @@ export function CreateEndpointModal({ onClose, onCreated }: Props) {
       setError("Endpoint name is required");
       return;
     }
-    try {
-      new URL(targetUrl);
-    } catch {
-      setError("Please provide a valid destination URL (e.g. https://api.my-app.com/webhooks)");
-      return;
+
+    // Resolve relative URL to current origin if needed
+    let resolvedUrl = targetUrl.trim();
+    if (resolvedUrl.startsWith("/")) {
+      const origin = typeof window !== "undefined" ? window.location.origin : "http://localhost:3000";
+      resolvedUrl = `${origin}${resolvedUrl}`;
+    } else {
+      try {
+        new URL(resolvedUrl);
+      } catch {
+        setError("Please provide a valid destination URL (e.g. https://api.my-app.com/webhooks or /api/sink)");
+        return;
+      }
     }
 
     setLoading(true);
@@ -41,7 +49,7 @@ export function CreateEndpointModal({ onClose, onCreated }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: name.trim(),
-          targetUrl: targetUrl.trim(),
+          targetUrl: resolvedUrl,
           chaosProfile: {
             latencyMs: Number(latencyMs),
             dropProb: Number(dropProb),
@@ -120,8 +128,8 @@ export function CreateEndpointModal({ onClose, onCreated }: Props) {
             <div className="relative">
               <Globe className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
               <input
-                type="url"
-                placeholder="https://api.myapp.vercel.app/api/webhooks/stripe"
+                type="text"
+                placeholder="/api/sink or https://api.myapp.com/webhooks"
                 value={targetUrl}
                 onChange={(e) => setTargetUrl(e.target.value)}
                 className="input-field pl-9"
@@ -129,7 +137,7 @@ export function CreateEndpointModal({ onClose, onCreated }: Props) {
               />
             </div>
             <p className="text-[11px] text-slate-500 mt-1">
-              Where AetherWeave will forward the intercepted and degraded payloads.
+              Use <code className="text-cyan-400">/api/sink</code> for the built-in idempotency prover or any external webhook URL.
             </p>
           </div>
 
@@ -178,7 +186,7 @@ export function CreateEndpointModal({ onClose, onCreated }: Props) {
                   onChange={(e) => setDuplicate(e.target.checked)}
                   className="rounded bg-slate-800 border-slate-700 text-purple-500 focus:ring-0"
                 />
-                Duplicate (2x)
+                Duplicate (2x Idempotency Test)
               </label>
 
               <label className="flex items-center gap-2 cursor-pointer text-xs text-slate-300">

@@ -39,3 +39,13 @@ model DeliveryAttempt {
   createdAt   DateTime      @default(now())
   completedAt DateTime?
 }
+
+model SinkReceipt {
+  id              String   @id @default(cuid())
+  sourceEventId   String?
+  headers         String   @default("{}") // JSON string
+  body            String
+  isDuplicate     Boolean  @default(false)
+  signatureStatus String   // "valid" | "missing" | "unverified"
+  receivedAt      DateTime @default(now())
+}
