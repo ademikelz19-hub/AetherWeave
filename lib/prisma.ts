@@ -58,12 +58,12 @@ if (!globalForStore.memEndpoints) {
 
   globalForStore.memEndpoints = [
     {
-      id: "ep_paystack_voting_sim",
-      name: "Paystack Voting Webhook Gate (Live Chaos)",
-      slug: "paystack-voting-sim",
+      id: "ep_stripe_gateway",
+      name: "Stripe Payment Gateway (Chaos Simulation)",
+      slug: "stripe-gateway-sim",
       targetUrl: target,
       chaosProfile: JSON.stringify({
-        latencyMs: 1500,
+        latencyMs: 1200,
         dropProb: 0,
         duplicate: true,
         scramble: false,
@@ -72,12 +72,12 @@ if (!globalForStore.memEndpoints) {
       updatedAt: new Date(Date.now() + 1000),
     },
     {
-      id: "ep_stripe_voting_sim",
-      name: "Stripe Voting Payment Gate (Live Chaos)",
-      slug: "stripe-voting-sim",
+      id: "ep_paystack_gateway",
+      name: "Paystack Ingress Proxy (Chaos Simulation)",
+      slug: "paystack-gateway-sim",
       targetUrl: target,
       chaosProfile: JSON.stringify({
-        latencyMs: 1200,
+        latencyMs: 1500,
         dropProb: 0,
         duplicate: true,
         scramble: false,

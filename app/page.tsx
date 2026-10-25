@@ -8,6 +8,7 @@ import { FlowMap } from "@/components/FlowMap";
 import { StatsBar } from "@/components/StatsBar";
 import { LiveWebhookSender } from "@/components/LiveWebhookSender";
 import { SinkMonitor } from "@/components/SinkMonitor";
+import { HowItWorksBanner } from "@/components/HowItWorksBanner";
 import { WebhookEndpointRow, EventPayloadRow } from "@/lib/types";
 import { Zap, Plus, Activity, GitBranch, Shield, ShieldCheck, Send } from "lucide-react";
 
@@ -156,6 +157,9 @@ export default function Home() {
       <StatsBar endpoints={endpoints} events={events} />
 
       <div className="flex-1 max-w-screen-2xl mx-auto w-full px-6 py-6 flex flex-col gap-6">
+        {/* Universal Explainer & Quick Start Guide */}
+        <HowItWorksBanner selectedEndpoint={selectedEndpoint} />
+
         {/* Collapsible Live Webhook Dispatcher */}
         {showSender && (
           <LiveWebhookSender

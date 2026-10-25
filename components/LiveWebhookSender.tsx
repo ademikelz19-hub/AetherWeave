@@ -11,45 +11,8 @@ interface Props {
 
 const TEMPLATES = [
   {
-    id: "paystack_vote",
-    name: "Paystack (Votes)",
-    type: "payment",
-    headers: {
-      "Content-Type": "application/json",
-      "x-paystack-signature": "5257a869e7ecebeda32affa62cdca3fa51cad7e77a0e56ff536d0ce8e108d8bd",
-    },
-    body: JSON.stringify(
-      {
-        event: "charge.success",
-        data: {
-          id: Math.floor(Math.random() * 899999 + 100000),
-          domain: "test",
-          status: "success",
-          reference: `vote_ref_${Math.floor(Math.random() * 899999 + 100000)}`,
-          amount: 50000,
-          gateway_response: "Successful",
-          paid_at: new Date().toISOString(),
-          channel: "card",
-          currency: "NGN",
-          metadata: {
-            candidate_id: "cand_winner_01",
-            contestant: "Candidate Alex",
-            votes_purchased: 50,
-            voter_email: "voter@example.com",
-          },
-          customer: {
-            id: 84392,
-            email: "voter@example.com",
-          },
-        },
-      },
-      null,
-      2
-    ),
-  },
-  {
     id: "stripe_payment",
-    name: "Stripe (Votes)",
+    name: "Stripe",
     type: "payment",
     headers: {
       "Content-Type": "application/json",
@@ -64,15 +27,51 @@ const TEMPLATES = [
         data: {
           object: {
             id: `pi_test_${Math.floor(Math.random() * 899999 + 100000)}`,
-            amount: 2500,
+            amount: 9900,
             currency: "usd",
+            customer: "cus_pro_tier_928",
             status: "succeeded",
+            description: "SaaS Enterprise Subscription",
             metadata: {
-              candidate_id: "cand_winner_01",
-              contestant: "Candidate Alex",
-              votes_purchased: 25,
-              voter_email: "voter@example.com",
+              accountId: "acc_live_84920",
+              plan: "scale_monthly",
             },
+          },
+        },
+      },
+      null,
+      2
+    ),
+  },
+  {
+    id: "paystack_payment",
+    name: "Paystack",
+    type: "payment",
+    headers: {
+      "Content-Type": "application/json",
+      "x-paystack-signature": "5257a869e7ecebeda32affa62cdca3fa51cad7e77a0e56ff536d0ce8e108d8bd",
+    },
+    body: JSON.stringify(
+      {
+        event: "charge.success",
+        data: {
+          id: Math.floor(Math.random() * 899999 + 100000),
+          domain: "live",
+          status: "success",
+          reference: `ref_${Math.floor(Math.random() * 899999 + 100000)}`,
+          amount: 50000,
+          gateway_response: "Successful",
+          paid_at: new Date().toISOString(),
+          channel: "card",
+          currency: "NGN",
+          customer: {
+            id: 84392,
+            email: "developer@example.com",
+            customer_code: "CUS_9401283",
+          },
+          metadata: {
+            invoice_id: "inv_2026_1092",
+            service: "api_tier_access",
           },
         },
       },
@@ -95,16 +94,16 @@ const TEMPLATES = [
         ref: "refs/heads/main",
         repository: {
           name: "aetherweave-core",
-          full_name: "ademikelz19-hub/aetherweave-core",
+          full_name: "enterprise/aetherweave-core",
         },
         pusher: {
-          name: "ademikelz",
-          email: "dev@aetherweave.io",
+          name: "lead-dev",
+          email: "dev@company.com",
         },
         commits: [
           {
             id: `c361e44${Math.floor(Math.random() * 8999 + 1000)}`,
-            message: "fix: resolve SQLite concurrent lock contention",
+            message: "fix(queue): resolve concurrency contention in edge worker",
             timestamp: new Date().toISOString(),
           },
         ],
@@ -114,8 +113,38 @@ const TEMPLATES = [
     ),
   },
   {
+    id: "shopify_order",
+    name: "Shopify",
+    type: "ecommerce",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Shopify-Topic": "orders/create",
+      "X-Shopify-Hmac-Sha256": "W2h+k/5pM508B6f88B97Z2V3hQ8Fw=",
+    },
+    body: JSON.stringify(
+      {
+        id: Math.floor(Math.random() * 89999999 + 10000000),
+        email: "buyer@example.com",
+        total_price: "149.00",
+        currency: "USD",
+        financial_status: "paid",
+        fulfillment_status: "unfulfilled",
+        line_items: [
+          {
+            id: 948102,
+            title: "Developer Hardware Security Key",
+            price: "149.00",
+            quantity: 1,
+          },
+        ],
+      },
+      null,
+      2
+    ),
+  },
+  {
     id: "custom",
-    name: "Custom",
+    name: "Custom JSON",
     type: "custom",
     headers: {
       "Content-Type": "application/json",
@@ -124,10 +153,10 @@ const TEMPLATES = [
     body: JSON.stringify(
       {
         id: `custom_evt_${Date.now()}`,
-        action: "vote.cast",
-        contestant: "Candidate Alex",
-        votes: 10,
-        verified: true,
+        action: "data.sync.requested",
+        entity: "organization_vault",
+        status: "pending_verification",
+        timestamp: new Date().toISOString(),
       },
       null,
       2
