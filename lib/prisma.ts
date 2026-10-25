@@ -58,6 +58,20 @@ if (!globalForStore.memEndpoints) {
 
   globalForStore.memEndpoints = [
     {
+      id: "ep_paystack_voting_sim",
+      name: "Paystack Voting Webhook Gate (Live Chaos)",
+      slug: "paystack-voting-sim",
+      targetUrl: target,
+      chaosProfile: JSON.stringify({
+        latencyMs: 1500,
+        dropProb: 0,
+        duplicate: true,
+        scramble: false,
+      }),
+      createdAt: new Date(Date.now() + 1000),
+      updatedAt: new Date(Date.now() + 1000),
+    },
+    {
       id: "ep_stripe_voting_sim",
       name: "Stripe Voting Payment Gate (Live Chaos)",
       slug: "stripe-voting-sim",

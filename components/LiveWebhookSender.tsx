@@ -11,8 +11,45 @@ interface Props {
 
 const TEMPLATES = [
   {
+    id: "paystack_vote",
+    name: "Paystack (Votes)",
+    type: "payment",
+    headers: {
+      "Content-Type": "application/json",
+      "x-paystack-signature": "5257a869e7ecebeda32affa62cdca3fa51cad7e77a0e56ff536d0ce8e108d8bd",
+    },
+    body: JSON.stringify(
+      {
+        event: "charge.success",
+        data: {
+          id: Math.floor(Math.random() * 899999 + 100000),
+          domain: "test",
+          status: "success",
+          reference: `vote_ref_${Math.floor(Math.random() * 899999 + 100000)}`,
+          amount: 50000,
+          gateway_response: "Successful",
+          paid_at: new Date().toISOString(),
+          channel: "card",
+          currency: "NGN",
+          metadata: {
+            candidate_id: "cand_winner_01",
+            contestant: "Candidate Alex",
+            votes_purchased: 50,
+            voter_email: "voter@example.com",
+          },
+          customer: {
+            id: 84392,
+            email: "voter@example.com",
+          },
+        },
+      },
+      null,
+      2
+    ),
+  },
+  {
     id: "stripe_payment",
-    name: "Stripe: payment_intent.succeeded",
+    name: "Stripe (Votes)",
     type: "payment",
     headers: {
       "Content-Type": "application/json",
@@ -27,10 +64,15 @@ const TEMPLATES = [
         data: {
           object: {
             id: `pi_test_${Math.floor(Math.random() * 899999 + 100000)}`,
-            amount: 9900,
+            amount: 2500,
             currency: "usd",
-            customer: "cus_aether_pro",
             status: "succeeded",
+            metadata: {
+              candidate_id: "cand_winner_01",
+              contestant: "Candidate Alex",
+              votes_purchased: 25,
+              voter_email: "voter@example.com",
+            },
           },
         },
       },
@@ -40,7 +82,7 @@ const TEMPLATES = [
   },
   {
     id: "github_push",
-    name: "GitHub: push (commit)",
+    name: "GitHub",
     type: "git",
     headers: {
       "Content-Type": "application/json",
@@ -73,7 +115,7 @@ const TEMPLATES = [
   },
   {
     id: "custom",
-    name: "Custom JSON Event",
+    name: "Custom",
     type: "custom",
     headers: {
       "Content-Type": "application/json",
@@ -82,8 +124,9 @@ const TEMPLATES = [
     body: JSON.stringify(
       {
         id: `custom_evt_${Date.now()}`,
-        action: "user.subscription.renewed",
-        tier: "enterprise_pro",
+        action: "vote.cast",
+        contestant: "Candidate Alex",
+        votes: 10,
         verified: true,
       },
       null,
@@ -221,13 +264,21 @@ export function LiveWebhookSender({ endpoint, onSent }: Props) {
               onClick={() => {
                 try {
                   const obj = JSON.parse(bodyText);
-                  if (obj.id) obj.id = `evt_test_${Math.floor(Math.random() * 899999 + 100000)}`;
+                  const rand = Math.floor(Math.random() * 899999 + 100000);
+                  if (obj.data?.reference) {
+                    obj.data.reference = `vote_ref_${rand}`;
+                    if (obj.data.id) obj.data.id = rand;
+                  }
+                  if (obj.id) {
+                    obj.id = `evt_test_${rand}`;
+                    if (obj.data?.object?.id) obj.data.object.id = `pi_test_${rand}`;
+                  }
                   setBodyText(JSON.stringify(obj, null, 2));
                 } catch {}
               }}
               className="text-[10px] text-cyan-400 hover:text-cyan-300"
             >
-              ↺ Regen Event ID
+              ↺ Regen Event / Reference ID
             </button>
           </label>
           <textarea

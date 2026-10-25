@@ -23,16 +23,25 @@ export async function POST(request: Request) {
       parsedBody = JSON.parse(bodyText);
     } catch {}
 
+    const bodyData =
+      parsedBody.data && typeof parsedBody.data === "object"
+        ? (parsedBody.data as Record<string, unknown>)
+        : null;
+
     const sourceEventId =
       (parsedBody.id as string) ||
       (parsedBody.eventId as string) ||
       (parsedBody.event_id as string) ||
+      (bodyData?.reference ? String(bodyData.reference) : null) ||
+      (bodyData?.id ? String(bodyData.id) : null) ||
+      headersObj["x-paystack-signature"] ||
       headersObj["x-github-delivery"] ||
       headersObj["x-stripe-event-id"] ||
       null;
 
     const hasSignature = Boolean(
       headersObj["stripe-signature"] ||
+      headersObj["x-paystack-signature"] ||
       headersObj["x-hub-signature-256"] ||
       headersObj["x-signature"]
     );
