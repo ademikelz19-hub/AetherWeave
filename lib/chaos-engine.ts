@@ -66,6 +66,15 @@ export async function forwardPayload(
 
   const start = Date.now();
   try {
+    // Resolve relative URLs to host
+    let resolvedUrl = targetUrl;
+    if (resolvedUrl.startsWith("/")) {
+      const host = process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : "http://localhost:3000";
+      resolvedUrl = `${host}${resolvedUrl}`;
+    }
+
     // Strip hop-by-hop headers and host
     const forwardHeaders: Record<string, string> = {};
     const skipHeaders = new Set([
@@ -88,7 +97,7 @@ export async function forwardPayload(
     forwardHeaders["x-aetherweave-forwarded"] = "true";
     forwardHeaders["x-aetherweave-delay-ms"] = String(delayMs);
 
-    const res = await fetch(targetUrl, {
+    const res = await fetch(resolvedUrl, {
       method: "POST",
       headers: forwardHeaders,
       body,
