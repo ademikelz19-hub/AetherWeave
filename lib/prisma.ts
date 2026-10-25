@@ -14,15 +14,19 @@ export const prisma =
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
 /**
- * Configure SQLite for high concurrency:
- * - WAL (Write-Ahead Logging): Allows concurrent readers while writing.
- * - busy_timeout = 5000: Prevents instant SQLITE_BUSY errors during parallel burst writes.
- * - synchronous = NORMAL: Minimizes I/O barrier stalls in WAL mode.
- *
- * NOTE: SQLite PRAGMA commands return result rows, so Prisma requires $queryRawUnsafe instead of $executeRawUnsafe.
+ * Configure SQLite for high concurrency (if running against local SQLite).
+ * If running on PostgreSQL (e.g. Prisma Postgres on Vercel), this is a no-op.
  */
 export async function ensureSqlitePragmas(): Promise<void> {
   if (globalForPrisma.sqlitePragmasConfigured) return;
+
+  const dbUrl = process.env.DATABASE_URL || "";
+  // Only execute SQLite pragmas if running on SQLite (file: protocol)
+  if (!dbUrl.startsWith("file:") && !dbUrl.includes(".db")) {
+    globalForPrisma.sqlitePragmasConfigured = true;
+    return;
+  }
+
   try {
     await prisma.$queryRawUnsafe("PRAGMA journal_mode = WAL;");
     await prisma.$queryRawUnsafe("PRAGMA busy_timeout = 5000;");
@@ -33,5 +37,5 @@ export async function ensureSqlitePragmas(): Promise<void> {
   }
 }
 
-// Initial configuration
+// Initial check
 ensureSqlitePragmas().catch(() => {});
