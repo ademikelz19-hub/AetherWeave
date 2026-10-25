@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { prisma, ensureTablesExist } from "@/lib/prisma";
 import { ChaosProfile, DEFAULT_CHAOS_PROFILE } from "@/lib/types";
+
 
 export async function GET(
   _request: Request,
@@ -8,6 +9,7 @@ export async function GET(
 ) {
   const { id } = await params;
   try {
+    await ensureTablesExist();
     const endpoint = await prisma.webhookEndpoint.findUnique({
       where: { id },
       include: {
@@ -55,6 +57,7 @@ export async function PATCH(
 ) {
   const { id } = await params;
   try {
+    await ensureTablesExist();
     const body = await request.json();
     const { name, targetUrl, chaosProfile } = body as {
       name?: string;
@@ -102,6 +105,7 @@ export async function DELETE(
 ) {
   const { id } = await params;
   try {
+    await ensureTablesExist();
     await prisma.webhookEndpoint.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch (error) {

@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { prisma, ensureTablesExist } from "@/lib/prisma";
 import { DEFAULT_CHAOS_PROFILE, ChaosProfile } from "@/lib/types";
 import { nanoid } from "nanoid";
 
+
 export async function GET() {
   try {
+    await ensureTablesExist();
     const endpoints = await prisma.webhookEndpoint.findMany({
       orderBy: { createdAt: "desc" },
       include: {
@@ -32,6 +34,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    await ensureTablesExist();
     const body = await request.json();
     const { name, targetUrl, chaosProfile } = body;
 

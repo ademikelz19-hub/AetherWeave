@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { prisma, ensureTablesExist } from "@/lib/prisma";
 import { ChaosProfile, DEFAULT_CHAOS_PROFILE } from "@/lib/types";
+
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -8,6 +9,7 @@ export async function GET(request: Request) {
   const limit = Math.min(parseInt(searchParams.get("limit") ?? "50"), 100);
 
   try {
+    await ensureTablesExist();
     const where = endpointId ? { endpointId } : {};
 
     const events = await prisma.eventPayload.findMany({

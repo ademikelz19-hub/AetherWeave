@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { prisma, ensureTablesExist } from "@/lib/prisma";
 import { forwardPayload } from "@/lib/chaos-engine";
+
 
 export async function POST(request: Request) {
   try {
+    await ensureTablesExist();
     const { payloadId, targetUrl, delayMs = 0 } = await request.json();
 
     if (!payloadId) {

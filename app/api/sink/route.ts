@@ -1,17 +1,10 @@
 import { NextResponse } from "next/server";
-import { prisma, ensureSqlitePragmas } from "@/lib/prisma";
+import { prisma, ensureTablesExist } from "@/lib/prisma";
 
-/**
- * POST /api/sink
- * Built-in Target Sink:
- * Simulates a realistic production application backend receiving webhooks.
- * - Inspects incoming cryptographic headers (Stripe, GitHub, HMAC signatures)
- * - Detects duplicate deliveries mathematically: checks if sourceEventId has already been processed
- * - Proves idempotency: returns 200 OK without double-mutating application state
- */
+
 export async function POST(request: Request) {
   try {
-    await ensureSqlitePragmas();
+    await ensureTablesExist();
 
     const headersObj: Record<string, string> = {};
     request.headers.forEach((val, key) => {
@@ -30,7 +23,6 @@ export async function POST(request: Request) {
       parsedBody = JSON.parse(bodyText);
     } catch {}
 
-    // Extract event ID from common webhook formats
     const sourceEventId =
       (parsedBody.id as string) ||
       (parsedBody.eventId as string) ||
@@ -39,7 +31,6 @@ export async function POST(request: Request) {
       headersObj["x-stripe-event-id"] ||
       null;
 
-    // Determine signature status
     const hasSignature = Boolean(
       headersObj["stripe-signature"] ||
       headersObj["x-hub-signature-256"] ||
@@ -47,7 +38,6 @@ export async function POST(request: Request) {
     );
     const signatureStatus = hasSignature ? "valid" : "missing";
 
-    // Idempotency check: see if we already received this event ID
     let isDuplicate = false;
     if (sourceEventId) {
       const existing = await prisma.sinkReceipt.findFirst({
@@ -58,7 +48,6 @@ export async function POST(request: Request) {
       }
     }
 
-    // Persist sink receipt
     const receipt = await prisma.sinkReceipt.create({
       data: {
         sourceEventId,
@@ -92,13 +81,9 @@ export async function POST(request: Request) {
   }
 }
 
-/**
- * GET /api/sink
- * Fetches recent receipts received by the built-in target sink
- */
 export async function GET() {
   try {
-    await ensureSqlitePragmas();
+    await ensureTablesExist();
     const receipts = await prisma.sinkReceipt.findMany({
       orderBy: { receivedAt: "desc" },
       take: 50,
@@ -125,13 +110,9 @@ export async function GET() {
   }
 }
 
-/**
- * DELETE /api/sink
- * Clears sink receipts history for fresh test runs
- */
 export async function DELETE() {
   try {
-    await ensureSqlitePragmas();
+    await ensureTablesExist();
     await prisma.sinkReceipt.deleteMany({});
     return NextResponse.json({ cleared: true });
   } catch (error) {
