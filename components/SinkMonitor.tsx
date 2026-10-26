@@ -56,7 +56,7 @@ export function SinkMonitor() {
         <div>
           <h3 className="text-base font-bold font-space text-emerald-400 flex items-center gap-2">
             <ShieldCheck className="w-5 h-5 text-emerald-400" />
-            Built-in Target &amp; Duplicate Safety Checker (/api/sink)
+            Built-in Safety Checker &amp; Duplicate Monitor (Sandbox)
           </h3>
           <p className="text-xs text-slate-400">
             Shows incoming test messages and verifies if duplicates were safely caught without double-crediting

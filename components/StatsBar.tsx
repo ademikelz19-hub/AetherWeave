@@ -38,10 +38,10 @@ export function StatsBar({ endpoints, events }: Props) {
             <Activity className="w-4 h-4" />
           </div>
           <div>
-            <div className="text-xs text-slate-500">Total Ingested</div>
+            <div className="text-xs text-slate-400">Test Webhooks Sent</div>
             <div className="text-base font-bold font-space text-slate-200">
               {totalEvents}{" "}
-              <span className="text-xs font-normal text-slate-500">events</span>
+              <span className="text-xs font-normal text-slate-500">tests</span>
             </div>
           </div>
         </div>
@@ -51,10 +51,10 @@ export function StatsBar({ endpoints, events }: Props) {
             <Clock className="w-4 h-4" />
           </div>
           <div>
-            <div className="text-xs text-slate-500">Injected Delay Avg</div>
+            <div className="text-xs text-slate-400">Simulated Lag (Avg)</div>
             <div className="text-base font-bold font-space text-slate-200">
               {avgLatency}{" "}
-              <span className="text-xs font-normal text-slate-500">ms</span>
+              <span className="text-xs font-normal text-slate-500">ms delay</span>
             </div>
           </div>
         </div>
@@ -64,10 +64,10 @@ export function StatsBar({ endpoints, events }: Props) {
             <ShieldAlert className="w-4 h-4" />
           </div>
           <div>
-            <div className="text-xs text-slate-500">Chaos Drops</div>
+            <div className="text-xs text-slate-400">Lost Packets Simulated</div>
             <div className="text-base font-bold font-space text-slate-200">
               {droppedAttempts}{" "}
-              <span className="text-xs font-normal text-slate-500">dropped</span>
+              <span className="text-xs font-normal text-slate-500">lost</span>
             </div>
           </div>
         </div>
@@ -77,7 +77,7 @@ export function StatsBar({ endpoints, events }: Props) {
             <Cpu className="w-4 h-4" />
           </div>
           <div>
-            <div className="text-xs text-slate-500">Delivery Resilience</div>
+            <div className="text-xs text-slate-400">Delivery Success Rate</div>
             <div className="text-base font-bold font-space text-slate-200">
               {deliveryRate}
               <span className="text-xs font-normal text-slate-500">%</span>

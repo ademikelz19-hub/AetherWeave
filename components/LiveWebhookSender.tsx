@@ -333,26 +333,44 @@ export function LiveWebhookSender({ endpoint, onSent }: Props) {
       </div>
 
       {/* Action and Response */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-1">
-        <button
-          onClick={handleSend}
-          disabled={isSending || !endpoint}
-          className="btn-primary w-full sm:w-auto px-6 py-2.5 flex items-center justify-center gap-2 text-sm shadow-[0_0_15px_rgba(6,182,212,0.3)]"
-        >
-          <Zap className="w-4 h-4" />
-          {isSending ? "Sending to your site..." : "⚡ Send Test Webhook to Your Website"}
-        </button>
+      <div className="space-y-3 pt-1">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <button
+            onClick={handleSend}
+            disabled={isSending || !endpoint}
+            className="btn-primary w-full sm:w-auto px-6 py-2.5 flex items-center justify-center gap-2 text-sm shadow-[0_0_15px_rgba(6,182,212,0.3)]"
+          >
+            <Zap className="w-4 h-4" />
+            {isSending ? "Simulating & Sending..." : "⚡ Send Test Webhook to Your Website"}
+          </button>
+
+          {isSending && (
+            <div className="flex items-center gap-2.5 text-xs text-amber-300 bg-amber-500/10 border border-amber-500/20 px-3.5 py-2 rounded-xl">
+              <div className="w-3.5 h-3.5 border-2 border-amber-400 border-t-transparent rounded-full animate-spin" />
+              <span>We are preparing this test message and injecting network stress...</span>
+            </div>
+          )}
+        </div>
 
         {responseLog && (
-          <div className="flex items-center gap-3 text-xs bg-slate-900/80 px-4 py-2 rounded-lg border border-slate-700">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-            <div>
-              <span className="font-semibold text-emerald-400">
-                HTTP {responseLog.status} Accepted
-              </span>
-              <span className="text-slate-400 ml-2">at {responseLog.timestamp}</span>
+          <div className="p-3.5 rounded-xl bg-cyan-950/40 border border-cyan-500/30 text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-in fade-in duration-200">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0">
+                <CheckCircle2 className="w-5 h-5" />
+              </div>
+              <div>
+                <div className="font-bold text-slate-100 flex items-center gap-2">
+                  <span>Test Webhook Successfully Dispatched</span>
+                  <span className="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded font-mono font-medium">
+                    Accepted at {responseLog.timestamp}
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-300 mt-0.5 leading-relaxed">
+                  We are now simulating {endpoint?.chaosProfile.latencyMs ?? 0}ms lag and {endpoint?.chaosProfile.duplicate ? "delivering the message TWICE to your target website" : "delivering the message to your target website"}. Check your <strong>Test History &amp; Logs</strong> below!
+                </p>
+              </div>
             </div>
-            <code className="text-cyan-300 font-mono text-[11px] bg-slate-950 px-2 py-0.5 rounded">
+            <code className="text-cyan-300 font-mono text-[11px] bg-slate-900 px-2.5 py-1 rounded border border-slate-800 flex-shrink-0">
               {(responseLog.data as { eventId?: string })?.eventId ?? "Ack"}
             </code>
           </div>

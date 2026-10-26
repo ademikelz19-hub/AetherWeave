@@ -103,14 +103,14 @@ export function EndpointCard({
               setShowConfig(!showConfig);
             }}
             className="p-1 rounded hover:bg-slate-700 text-slate-500 hover:text-purple-400 transition-colors"
-            title="Configure chaos"
+            title="Configure Stress Settings"
           >
             <Activity className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={copyUrl}
             className="p-1 rounded hover:bg-slate-700 text-slate-500 hover:text-cyan-400 transition-colors"
-            title="Copy ingest URL"
+            title="Copy Testing Ingest URL"
           >
             {copied ? (
               <Check className="w-3.5 h-3.5 text-emerald-400" />
@@ -122,7 +122,7 @@ export function EndpointCard({
             onClick={handleDelete}
             disabled={deleting}
             className="p-1 rounded hover:bg-slate-700 text-slate-500 hover:text-red-400 transition-colors"
-            title="Delete endpoint"
+            title="Delete Target Website"
           >
             <Trash2 className="w-3.5 h-3.5" />
           </button>
@@ -140,22 +140,22 @@ export function EndpointCard({
         <div className="flex flex-wrap gap-1">
           {profile.latencyMs > 0 && (
             <span className="text-xs px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20">
-              +{profile.latencyMs}ms
+              +{profile.latencyMs}ms lag
             </span>
           )}
           {profile.dropProb > 0 && (
             <span className="text-xs px-1.5 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/20">
-              drop {Math.round(profile.dropProb * 100)}%
+              Drops {Math.round(profile.dropProb * 100)}%
             </span>
           )}
           {profile.duplicate && (
             <span className="text-xs px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20">
-              2x dup
+              Sends Twice
             </span>
           )}
           {profile.scramble && (
             <span className="text-xs px-1.5 py-0.5 rounded bg-orange-500/10 text-orange-400 border border-orange-500/20">
-              scramble
+              Reversed Order
             </span>
           )}
         </div>
