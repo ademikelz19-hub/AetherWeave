@@ -215,7 +215,7 @@ export default function Home() {
                 AetherWeave
               </h1>
               <p className="text-xs text-slate-400">
-                Webhook Stress Testing &amp; Double-Payment / Double-Vote Protection
+                Webhook Stress Testing &amp; Duplicate Delivery Protection
               </p>
             </div>
           </div>

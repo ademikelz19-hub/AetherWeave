@@ -223,7 +223,7 @@ export function ChaosConfigPanel({ profile, onUpdate, compact = false }: Props) 
           <Copy className="w-5 h-5 flex-shrink-0" />
           <div className="text-left">
             <div className="text-xs font-bold">Send Twice (Double-Delivery)</div>
-            <div className="text-[10px] opacity-75 mt-0.5">Tests if your site double-counts votes</div>
+            <div className="text-[10px] opacity-75 mt-0.5">Tests if your site safely prevents double-processing</div>
           </div>
         </button>
 

@@ -113,12 +113,12 @@ export function HowItWorksBanner({ selectedEndpoint }: Props) {
                   <span className="text-xs font-semibold text-slate-200">3. Check Your Website</span>
                 </div>
                 <p className="text-[11px] text-slate-400 leading-relaxed">
-                  Your website receives both messages. Check your website: Did it add votes or credit the user <strong>only ONCE</strong> (Safe ✅)? Or did it give free extra votes (Bug ❌)?
+                  Your website receives both messages. Check your website: Did it credit the user or fulfill the action <strong>only ONCE</strong> (Safe ✅)? Or did it duplicate the record (Bug ❌)?
                 </p>
               </div>
               <div className="mt-2.5 pt-2 border-t border-slate-800/60 flex items-center gap-2 text-[10px] text-emerald-300 font-medium">
                 <ShieldCheck className="w-3 h-3" />
-                <span>Protects you from free double-votes or double-charges</span>
+                <span>Protects you from duplicate processing, double charges, and bugs</span>
               </div>
             </div>
           </div>

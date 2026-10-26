@@ -198,7 +198,7 @@ function EventRow({ event }: { event: EventPayloadRow }) {
               )}
               {isDuplicated && (
                 <li>
-                  <strong>Double-Delivery Test:</strong> Sent to your website <strong>TWICE</strong> to test if your server accidentally counts votes twice or creates double charges.
+                  <strong>Double-Delivery Test:</strong> Sent to your website <strong>TWICE</strong> to test if your server accidentally processes the event twice or creates double charges.
                 </li>
               )}
               <li>
@@ -206,7 +206,7 @@ function EventRow({ event }: { event: EventPayloadRow }) {
               </li>
             </ul>
             <div className="pt-1.5 border-t border-cyan-500/20 text-[11px] text-amber-300 font-medium">
-              👉 What to check: Verify on your website that votes/rewards were added only ONCE. If it added twice, your site has a duplicate bug!
+              👉 What to check: Verify on your website that the action or payment was recorded only ONCE. If it processed twice, your site has a duplicate bug!
             </div>
           </div>
 

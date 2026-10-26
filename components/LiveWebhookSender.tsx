@@ -153,8 +153,8 @@ const TEMPLATES = [
     body: JSON.stringify(
       {
         id: `custom_evt_${Date.now()}`,
-        action: "vote.cast",
-        referenceId: `vote_ref_${Math.floor(Math.random() * 899999 + 100000)}`,
+        action: "order.created",
+        referenceId: `ref_${Math.floor(Math.random() * 899999 + 100000)}`,
         status: "confirmed",
         timestamp: new Date().toISOString(),
       },
@@ -313,7 +313,7 @@ export function LiveWebhookSender({ endpoint, onSent }: Props) {
                   const obj = JSON.parse(bodyText);
                   const rand = Math.floor(Math.random() * 899999 + 100000);
                   if (obj.data?.reference) {
-                    obj.data.reference = `vote_ref_${rand}`;
+                    obj.data.reference = `ref_${rand}`;
                     if (obj.data.id) obj.data.id = rand;
                   }
                   if (obj.id) {

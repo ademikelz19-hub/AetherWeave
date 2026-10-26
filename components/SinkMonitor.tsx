@@ -88,9 +88,9 @@ export function SinkMonitor() {
           <span>🛡️ What does this check? (In Plain English)</span>
         </div>
         <p className="text-[11px] text-slate-400 leading-relaxed">
-          When payment companies (like Stripe or Paystack) experience network timeouts, they automatically retry and send the payment notification a second time. 
-          If your website doesn&apos;t recognize that it already counted that payment, the user gets <strong>free double votes</strong> or gets <strong>charged twice</strong>. 
-          This tool proves whether the duplicate message was safely recognized.
+          When payment companies (like Stripe or Paystack) experience network timeouts, they automatically retry and send the notification a second time. 
+          If your website doesn&apos;t recognize that it already processed that event, your site might <strong>fulfill the order twice</strong>, grant double credits, or trigger duplicate side-effects. 
+          This tool tests whether duplicate deliveries are safely recognized.
         </p>
       </div>
 

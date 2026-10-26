@@ -88,7 +88,7 @@ export function FlowMap({ endpoint, events }: Props) {
             {endpoint.targetUrl}
           </h3>
           <p className="text-[11px] text-slate-500 mt-2">
-            Your server receives the message and updates votes/data
+            Your server receives the message and processes the event
           </p>
           <div className="mt-4 px-2.5 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-[10px] text-cyan-300 font-medium">
             Must handle duplicates safely
