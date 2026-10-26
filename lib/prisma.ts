@@ -59,7 +59,7 @@ if (!globalForStore.memEndpoints) {
   globalForStore.memEndpoints = [
     {
       id: "ep_stripe_gateway",
-      name: "Stripe Payment Gateway (Chaos Simulation)",
+      name: "Example 1: Payment Notification (Demo Sandbox)",
       slug: "stripe-gateway-sim",
       targetUrl: target,
       chaosProfile: JSON.stringify({
@@ -73,7 +73,7 @@ if (!globalForStore.memEndpoints) {
     },
     {
       id: "ep_paystack_gateway",
-      name: "Paystack Ingress Proxy (Chaos Simulation)",
+      name: "Example 2: Checkout Notification (Demo Sandbox)",
       slug: "paystack-gateway-sim",
       targetUrl: target,
       chaosProfile: JSON.stringify({

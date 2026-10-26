@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { WebhookEndpointRow } from "@/lib/types";
 import { Send, Zap, CheckCircle2, AlertCircle, Code, Shield } from "lucide-react";
 
@@ -148,14 +148,14 @@ const TEMPLATES = [
     type: "custom",
     headers: {
       "Content-Type": "application/json",
-      "X-Chaos-Test": "aetherweave-vortex",
+      "X-Test-Source": "aetherweave",
     },
     body: JSON.stringify(
       {
         id: `custom_evt_${Date.now()}`,
-        action: "data.sync.requested",
-        entity: "organization_vault",
-        status: "pending_verification",
+        action: "vote.cast",
+        referenceId: `vote_ref_${Math.floor(Math.random() * 899999 + 100000)}`,
+        status: "confirmed",
         timestamp: new Date().toISOString(),
       },
       null,
@@ -178,8 +178,26 @@ export function LiveWebhookSender({ endpoint, onSent }: Props) {
   } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // Restore saved template index from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("aetherweave_sender_template");
+      if (saved !== null) {
+        const parsed = parseInt(saved, 10);
+        if (!isNaN(parsed) && parsed >= 0 && parsed < TEMPLATES.length) {
+          setSelectedTemplate(parsed);
+          setBodyText(TEMPLATES[parsed].body);
+          setHeadersText(JSON.stringify(TEMPLATES[parsed].headers, null, 2));
+        }
+      }
+    } catch {}
+  }, []);
+
   const selectTemplate = (index: number) => {
     setSelectedTemplate(index);
+    try {
+      localStorage.setItem("aetherweave_sender_template", index.toString());
+    } catch {}
     const tmpl = TEMPLATES[index];
     setBodyText(tmpl.body);
     setHeadersText(JSON.stringify(tmpl.headers, null, 2));

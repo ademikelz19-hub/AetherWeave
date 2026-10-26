@@ -17,25 +17,50 @@ const POLL_INTERVAL = 2000;
 export default function Home() {
   const [endpoints, setEndpoints] = useState<WebhookEndpointRow[]>([]);
   const [events, setEvents] = useState<EventPayloadRow[]>([]);
-  const [selectedEndpoint, setSelectedEndpoint] = useState<WebhookEndpointRow | null>(null);
+  const [selectedEndpointId, setSelectedEndpointId] = useState<string | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [activeTab, setActiveTab] = useState<"timeline" | "flow" | "sink">("timeline");
   const [showSender, setShowSender] = useState(true);
   const [loading, setLoading] = useState(true);
 
+  const selectedEndpoint = endpoints.find((e) => e.id === selectedEndpointId) ?? endpoints[0] ?? null;
+
   const fetchEndpoints = useCallback(async () => {
     try {
       const res = await fetch("/api/endpoints");
       if (res.ok) {
-        let data = await res.json();
-        // Auto-seed initial functional endpoint if fresh
+        let data: WebhookEndpointRow[] = await res.json();
+
+        // 1. Filter out any endpoints the user previously deleted
+        try {
+          const deletedIds: string[] = JSON.parse(
+            localStorage.getItem("aetherweave_deleted_ids") || "[]"
+          );
+          if (deletedIds.length > 0) {
+            data = data.filter((ep) => !deletedIds.includes(ep.id));
+          }
+        } catch {}
+
+        // 2. Restore any custom endpoints the user created that might have dropped on serverless restart
+        try {
+          const cachedCustom: WebhookEndpointRow[] = JSON.parse(
+            localStorage.getItem("aetherweave_custom_endpoints") || "[]"
+          );
+          for (const customEp of cachedCustom) {
+            if (!data.some((d) => d.id === customEp.id)) {
+              data.unshift(customEp);
+            }
+          }
+        } catch {}
+
+        // Auto-seed initial functional demo endpoint if completely empty
         if (data.length === 0) {
           try {
             const seedRes = await fetch("/api/endpoints", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                name: "Stripe Billing Ingress (Built-in Sink)",
+                name: "Example 1: Payment Checkout (Sandbox Demo)",
                 targetUrl: typeof window !== "undefined" ? `${window.location.origin}/api/sink` : "http://localhost:3000/api/sink",
                 chaosProfile: {
                   latencyMs: 1500,
@@ -51,13 +76,25 @@ export default function Home() {
             }
           } catch {}
         }
+
         setEndpoints(data);
-        if (!selectedEndpoint && data.length > 0) {
-          setSelectedEndpoint(data[0]);
+
+        // 3. Restore previously selected endpoint from localStorage so reloads don't reset
+        try {
+          const savedId = localStorage.getItem("aetherweave_selected_id");
+          if (savedId && data.some((e) => e.id === savedId)) {
+            setSelectedEndpointId(savedId);
+          } else if (data.length > 0 && !selectedEndpointId) {
+            setSelectedEndpointId(data[0].id);
+          }
+        } catch {
+          if (data.length > 0 && !selectedEndpointId) {
+            setSelectedEndpointId(data[0].id);
+          }
         }
       }
     } catch {}
-  }, [selectedEndpoint]);
+  }, [selectedEndpointId]);
 
   const fetchEvents = useCallback(async () => {
     try {
@@ -74,6 +111,12 @@ export default function Home() {
 
   useEffect(() => {
     const init = async () => {
+      // Pick up saved selected endpoint ID from localStorage immediately
+      try {
+        const savedId = localStorage.getItem("aetherweave_selected_id");
+        if (savedId) setSelectedEndpointId(savedId);
+      } catch {}
+
       await fetchEndpoints();
       setLoading(false);
     };
@@ -86,23 +129,71 @@ export default function Home() {
     return () => clearInterval(interval);
   }, [fetchEvents]);
 
+  const handleSelectEndpoint = (ep: WebhookEndpointRow) => {
+    setSelectedEndpointId(ep.id);
+    try {
+      localStorage.setItem("aetherweave_selected_id", ep.id);
+    } catch {}
+  };
+
   const handleEndpointCreated = (endpoint: WebhookEndpointRow) => {
     setEndpoints((prev) => [endpoint, ...prev]);
-    setSelectedEndpoint(endpoint);
+    setSelectedEndpointId(endpoint.id);
+    try {
+      localStorage.setItem("aetherweave_selected_id", endpoint.id);
+      // Persist custom endpoints to local cache so cold starts never wipe them
+      const existing: WebhookEndpointRow[] = JSON.parse(
+        localStorage.getItem("aetherweave_custom_endpoints") || "[]"
+      );
+      localStorage.setItem(
+        "aetherweave_custom_endpoints",
+        JSON.stringify([endpoint, ...existing.filter((x) => x.id !== endpoint.id)])
+      );
+    } catch {}
     setShowCreateModal(false);
   };
 
   const handleEndpointUpdated = (updated: WebhookEndpointRow) => {
     setEndpoints((prev) => prev.map((e) => (e.id === updated.id ? updated : e)));
-    if (selectedEndpoint?.id === updated.id) {
-      setSelectedEndpoint(updated);
-    }
+    try {
+      const existing: WebhookEndpointRow[] = JSON.parse(
+        localStorage.getItem("aetherweave_custom_endpoints") || "[]"
+      );
+      localStorage.setItem(
+        "aetherweave_custom_endpoints",
+        JSON.stringify(existing.map((x) => (x.id === updated.id ? updated : x)))
+      );
+    } catch {}
   };
 
   const handleEndpointDeleted = (id: string) => {
     setEndpoints((prev) => prev.filter((e) => e.id !== id));
-    if (selectedEndpoint?.id === id) {
-      setSelectedEndpoint(endpoints.find((e) => e.id !== id) ?? null);
+    try {
+      // Mark as deleted so it never re-appears on reload
+      const deleted: string[] = JSON.parse(
+        localStorage.getItem("aetherweave_deleted_ids") || "[]"
+      );
+      if (!deleted.includes(id)) {
+        localStorage.setItem("aetherweave_deleted_ids", JSON.stringify([...deleted, id]));
+      }
+      // Remove from custom local endpoints
+      const existing: WebhookEndpointRow[] = JSON.parse(
+        localStorage.getItem("aetherweave_custom_endpoints") || "[]"
+      );
+      localStorage.setItem(
+        "aetherweave_custom_endpoints",
+        JSON.stringify(existing.filter((x) => x.id !== id))
+      );
+    } catch {}
+
+    if (selectedEndpointId === id) {
+      const remaining = endpoints.filter((e) => e.id !== id);
+      const nextId = remaining[0]?.id ?? null;
+      setSelectedEndpointId(nextId);
+      try {
+        if (nextId) localStorage.setItem("aetherweave_selected_id", nextId);
+        else localStorage.removeItem("aetherweave_selected_id");
+      } catch {}
     }
   };
 
@@ -203,7 +294,7 @@ export default function Home() {
                     key={endpoint.id}
                     endpoint={endpoint}
                     isSelected={selectedEndpoint?.id === endpoint.id}
-                    onClick={() => setSelectedEndpoint(endpoint)}
+                    onClick={() => handleSelectEndpoint(endpoint)}
                     onUpdated={handleEndpointUpdated}
                     onDeleted={() => handleEndpointDeleted(endpoint.id)}
                   />
