@@ -1,4 +1,5 @@
 import { ChaosProfile } from "./types";
+import { prisma } from "./prisma";
 
 /**
  * Simulates edge-compatible delay using setTimeout wrapped in a Promise.
@@ -69,9 +70,10 @@ export async function forwardPayload(
     // Resolve relative URLs to host
     let resolvedUrl = targetUrl;
     if (resolvedUrl.startsWith("/")) {
-      const host = process.env.VERCEL_URL
-        ? `https://${process.env.VERCEL_URL}`
-        : "http://localhost:3000";
+      const host =
+        process.env.NODE_ENV === "production"
+          ? "https://aether-weave-eight.vercel.app"
+          : "http://localhost:3000";
       resolvedUrl = `${host}${resolvedUrl}`;
     }
 
@@ -96,6 +98,50 @@ export async function forwardPayload(
       forwardHeaders["content-type"] || "application/json";
     forwardHeaders["x-aetherweave-forwarded"] = "true";
     forwardHeaders["x-aetherweave-delay-ms"] = String(delayMs);
+
+    // If target is internal sink, record directly to ensure instant, reliable duplicate tracking
+    if (resolvedUrl.includes("/api/sink")) {
+      try {
+        const parsed = (() => {
+          try {
+            return JSON.parse(body);
+          } catch {
+            return {};
+          }
+        })();
+        const sourceEventId =
+          (parsed.id as string) ||
+          (parsed.eventId as string) ||
+          (parsed.event_id as string) ||
+          (parsed.data?.reference ? String(parsed.data.reference) : null) ||
+          (parsed.data?.id ? String(parsed.data.id) : null) ||
+          forwardHeaders["x-stripe-signature"] ||
+          null;
+
+        let isDuplicate = false;
+        if (sourceEventId) {
+          const existing = await prisma.sinkReceipt.findFirst({
+            where: { sourceEventId },
+          });
+          if (existing) isDuplicate = true;
+        }
+
+        await prisma.sinkReceipt.create({
+          data: {
+            sourceEventId,
+            headers: JSON.stringify(forwardHeaders),
+            body,
+            isDuplicate,
+            signatureStatus: "valid",
+          },
+        });
+
+        const latencyMs = Date.now() - start + delayMs;
+        return { ok: true, status: 200, latencyMs };
+      } catch (err) {
+        console.error("Direct sink write failed:", err);
+      }
+    }
 
     const res = await fetch(resolvedUrl, {
       method: "POST",

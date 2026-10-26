@@ -25,6 +25,11 @@ export function FlowMap({ endpoint, events }: Props) {
           </p>
         </div>
         <div className="flex items-center gap-2 text-xs">
+          {profile.scramble && (
+            <span className="px-2.5 py-1 rounded-full bg-orange-500/15 border border-orange-500/30 text-orange-300 font-bold text-xs flex items-center gap-1.5">
+              🔀 Reverse Order Mode Active
+            </span>
+          )}
           <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping inline-block" />
           <span className="text-slate-300 font-mono">Live Monitoring</span>
         </div>
@@ -71,6 +76,12 @@ export function FlowMap({ endpoint, events }: Props) {
               <span className="text-slate-400">Send Twice (Duplicate):</span>
               <span className={profile.duplicate ? "text-purple-400 font-bold" : "text-slate-600"}>
                 {profile.duplicate ? "ACTIVE (2x)" : "OFF"}
+              </span>
+            </div>
+            <div className="flex justify-between items-center text-[11px] bg-slate-950/60 px-2.5 py-1 rounded border border-slate-800">
+              <span className="text-slate-400">Reverse Order Delivery:</span>
+              <span className={profile.scramble ? "text-orange-400 font-bold" : "text-slate-600"}>
+                {profile.scramble ? "ACTIVE (Reverse Order)" : "OFF"}
               </span>
             </div>
           </div>
@@ -133,6 +144,11 @@ export function FlowMap({ endpoint, events }: Props) {
                   </div>
 
                   <div className="flex items-center gap-2">
+                    {(attempt?.scrambled || profile.scramble) && (
+                      <span className="px-1.5 py-0.5 rounded bg-orange-500/20 text-orange-300 text-[10px] font-bold border border-orange-500/30">
+                        REVERSE ORDER
+                      </span>
+                    )}
                     {attempt?.duplicate && (
                       <span className="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 text-[10px]">
                         DUPLICATE EMITTED
