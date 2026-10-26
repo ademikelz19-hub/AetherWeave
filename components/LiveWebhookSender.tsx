@@ -237,7 +237,11 @@ export function LiveWebhookSender({ endpoint, onSent }: Props) {
         timestamp: new Date().toLocaleTimeString(),
       });
 
-      if (onSent) onSent();
+      if (onSent) {
+        onSent();
+        setTimeout(onSent, 400);
+        setTimeout(onSent, 1200);
+      }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Failed to emit webhook.");
     } finally {

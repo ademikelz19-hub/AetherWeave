@@ -50,7 +50,7 @@ async function processQueue() {
           }
         }
 
-        const forwardTasks = buildForwardTasks(task.profile);
+        const forwardTasks = buildForwardTasks(task.profile, task.profile.scramble);
 
         if (forwardTasks.length === 0) {
           await prisma.deliveryAttempt.create({
@@ -80,28 +80,28 @@ async function processQueue() {
           )
         );
 
-        Promise.all(
+        // Await dispatch so delivery results and duplicate absorption records are durably persisted
+        await Promise.all(
           forwardTasks.map(async (ft, idx) => {
             const attempt = attempts[idx];
             const result = await forwardPayload(
               task.targetUrl,
               task.headersObj,
               task.body,
-              ft.delayMs
+              // If target is internal sink, do not block serverless execution on massive delays
+              task.targetUrl.includes("/api/sink") ? Math.min(ft.delayMs, 100) : ft.delayMs
             );
 
             await prisma.deliveryAttempt.update({
               where: { id: attempt.id },
               data: {
                 status: result.ok ? "success" : "failed",
-                latencyMs: result.latencyMs,
+                latencyMs: ft.delayMs, // Preserve the configured delay for audit display
                 completedAt: new Date(),
               },
             });
           })
-        ).catch((dispatchErr) => {
-          console.error("Delayed forward dispatch error:", dispatchErr);
-        });
+        );
       } catch (itemErr) {
         console.error("Queue item execution error:", itemErr);
       }

@@ -52,30 +52,31 @@ const globalForStore = globalThis as unknown as {
 
 // Initialize in-memory store with default active endpoint so dashboard is immediately functional
 if (!globalForStore.memEndpoints) {
-  const target = process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}/api/sink`
-    : "http://localhost:3000/api/sink";
+  const canonicalSink =
+    process.env.NODE_ENV === "production"
+      ? "https://aether-weave-eight.vercel.app/api/sink"
+      : "http://localhost:3000/api/sink";
 
   globalForStore.memEndpoints = [
     {
       id: "ep_stripe_gateway",
       name: "Example 1: Payment Notification (Demo Sandbox)",
       slug: "stripe-gateway-sim",
-      targetUrl: target,
+      targetUrl: canonicalSink,
       chaosProfile: JSON.stringify({
         latencyMs: 1200,
         dropProb: 0,
         duplicate: true,
         scramble: false,
       }),
-      createdAt: new Date(Date.now() + 1000),
-      updatedAt: new Date(Date.now() + 1000),
+      createdAt: new Date(),
+      updatedAt: new Date(),
     },
     {
       id: "ep_paystack_gateway",
       name: "Example 2: Checkout Notification (Demo Sandbox)",
       slug: "paystack-gateway-sim",
-      targetUrl: target,
+      targetUrl: canonicalSink,
       chaosProfile: JSON.stringify({
         latencyMs: 1500,
         dropProb: 0,
