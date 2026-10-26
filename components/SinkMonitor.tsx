@@ -56,18 +56,18 @@ export function SinkMonitor() {
         <div>
           <h3 className="text-base font-bold font-space text-emerald-400 flex items-center gap-2">
             <ShieldCheck className="w-5 h-5 text-emerald-400" />
-            Destination Target Sink & Idempotency Prover (`/api/sink`)
+            Built-in Target &amp; Duplicate Safety Checker (/api/sink)
           </h3>
           <p className="text-xs text-slate-400">
-            Live observable verification of payloads delivered by AetherWeave with mathematical idempotency tracking
+            Shows incoming test messages and verifies if duplicates were safely caught without double-crediting
           </p>
         </div>
 
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-xs">
-            <span className="text-slate-400">Idempotency Checks:</span>
+            <span className="text-slate-400">Duplicates Absorbed:</span>
             <span className="text-purple-300 font-mono font-bold">
-              {duplicateCount} duplicates absorbed
+              {duplicateCount} duplicate(s)
             </span>
           </div>
 
@@ -75,11 +75,23 @@ export function SinkMonitor() {
             onClick={handleClear}
             disabled={clearing || receipts.length === 0}
             className="p-1.5 rounded hover:bg-slate-800 text-slate-500 hover:text-red-400 transition-colors disabled:opacity-30"
-            title="Clear sink history"
+            title="Clear history"
           >
             <Trash2 className="w-4 h-4" />
           </button>
         </div>
+      </div>
+
+      {/* Plain English explanation banner */}
+      <div className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 text-xs space-y-1.5">
+        <div className="font-semibold text-slate-200 flex items-center gap-2">
+          <span>🛡️ What does this check? (In Plain English)</span>
+        </div>
+        <p className="text-[11px] text-slate-400 leading-relaxed">
+          When payment companies (like Stripe or Paystack) experience network timeouts, they automatically retry and send the payment notification a second time. 
+          If your website doesn&apos;t recognize that it already counted that payment, the user gets <strong>free double votes</strong> or gets <strong>charged twice</strong>. 
+          This tool proves whether the duplicate message was safely recognized.
+        </p>
       </div>
 
       {loading ? (

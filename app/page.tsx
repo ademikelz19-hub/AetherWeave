@@ -123,8 +123,8 @@ export default function Home() {
               <h1 className="text-lg font-bold font-space neon-text-cyan tracking-tight">
                 AetherWeave
               </h1>
-              <p className="text-xs text-slate-500">
-                Deterministic Async Event Orchestrator
+              <p className="text-xs text-slate-400">
+                Webhook Stress Testing &amp; Double-Payment / Double-Vote Protection
               </p>
             </div>
           </div>
@@ -139,7 +139,7 @@ export default function Home() {
               }`}
             >
               <Send className="w-3.5 h-3.5" />
-              {showSender ? "Hide Live Emitter" : "⚡ Emit Live Webhook"}
+              {showSender ? "Hide Webhook Tester" : "⚡ Test Webhooks"}
             </button>
 
             <button
@@ -147,7 +147,7 @@ export default function Home() {
               className="btn-primary flex items-center gap-2"
             >
               <Plus className="w-4 h-4" />
-              New Endpoint
+              + Add Target Website
             </button>
           </div>
         </div>
@@ -174,11 +174,11 @@ export default function Home() {
           {/* Sidebar: Endpoint List */}
           <aside className="w-72 flex-shrink-0 flex flex-col gap-3">
             <div className="flex items-center justify-between">
-              <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                <GitBranch className="w-3.5 h-3.5" />
-                Vortex Endpoints
+              <h2 className="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+                <GitBranch className="w-3.5 h-3.5 text-cyan-400" />
+                Target Apps &amp; Websites
               </h2>
-              <span className="text-xs text-slate-600">{endpoints.length} active</span>
+              <span className="text-xs text-slate-500 font-mono">{endpoints.length} active</span>
             </div>
 
             <div className="flex flex-col gap-2 overflow-y-auto max-h-[calc(100vh-320px)]">
@@ -192,9 +192,9 @@ export default function Home() {
               ) : endpoints.length === 0 ? (
                 <div className="glass-panel p-6 text-center">
                   <Shield className="w-8 h-8 text-slate-600 mx-auto mb-2" />
-                  <p className="text-sm text-slate-500">No endpoints yet</p>
-                  <p className="text-xs text-slate-600 mt-1">
-                    Create one to start intercepting webhooks
+                  <p className="text-sm text-slate-400 font-medium">No target apps yet</p>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Click &quot;+ Add Target Website&quot; to test your site
                   </p>
                 </div>
               ) : (
@@ -227,7 +227,7 @@ export default function Home() {
                     }`}
                   >
                     <Activity className="w-3.5 h-3.5 inline mr-1.5" />
-                    Event Ingress Timeline ({selectedEvents.length})
+                    Test History &amp; Logs ({selectedEvents.length})
                   </button>
 
                   <button
@@ -239,7 +239,7 @@ export default function Home() {
                     }`}
                   >
                     <Zap className="w-3.5 h-3.5 inline mr-1.5" />
-                    Topological Flow Map
+                    Visual Delivery Path
                   </button>
 
                   <button
@@ -251,7 +251,7 @@ export default function Home() {
                     }`}
                   >
                     <ShieldCheck className="w-3.5 h-3.5 inline mr-1.5" />
-                    Destination Target Sink & Idempotency Prover
+                    Duplicate Protection Checker
                   </button>
                 </div>
 

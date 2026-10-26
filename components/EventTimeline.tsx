@@ -43,19 +43,23 @@ export function EventTimeline({ endpoint, events, onChaosUpdated }: Props) {
       <div className="flex-1 flex flex-col gap-3 min-w-0">
         {/* Ingest URL bar */}
         <div className="glass-panel px-4 py-3 flex items-center gap-3">
-          <span className="text-xs text-slate-500 flex-shrink-0">Ingest URL</span>
-          <code className="flex-1 text-xs text-cyan-400 font-mono truncate bg-slate-800/50 px-2 py-1 rounded">
+          <div className="flex flex-col flex-shrink-0">
+            <span className="text-xs font-semibold text-slate-300">Your Webhook Test URL:</span>
+            <span className="text-[10px] text-slate-500">Send webhooks here to test this app</span>
+          </div>
+          <code className="flex-1 text-xs text-cyan-400 font-mono truncate bg-slate-800/50 px-2.5 py-1.5 rounded border border-slate-700/60">
             {ingestUrl}
           </code>
-          <button onClick={copyUrl} className="p-1.5 hover:bg-slate-700 rounded transition-colors text-slate-400 hover:text-cyan-400">
-            {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+          <button onClick={copyUrl} className="px-2.5 py-1.5 hover:bg-slate-700 rounded transition-colors text-slate-300 hover:text-cyan-300 text-xs flex items-center gap-1.5 border border-slate-700">
+            {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+            <span>{copied ? "Copied!" : "Copy"}</span>
           </button>
           <a
             href={endpoint.targetUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="p-1.5 hover:bg-slate-700 rounded transition-colors text-slate-400 hover:text-cyan-400"
-            title="Open target URL"
+            className="p-1.5 hover:bg-slate-700 rounded transition-colors text-slate-400 hover:text-cyan-400 border border-slate-700"
+            title="Open target app destination"
           >
             <ExternalLink className="w-4 h-4" />
           </a>
@@ -178,10 +182,38 @@ function EventRow({ event }: { event: EventPayloadRow }) {
 
       {expanded && (
         <div className="border-t border-slate-700/30 p-3 space-y-3">
+          {/* Plain English Explanation */}
+          <div className="p-3 rounded-lg bg-cyan-950/30 border border-cyan-500/30 text-xs space-y-2">
+            <div className="font-semibold text-cyan-300 flex items-center gap-1.5">
+              <span>💡 What Happened In This Test (Plain English)</span>
+            </div>
+            <ul className="text-slate-300 space-y-1 list-disc list-inside text-[11px] leading-relaxed">
+              <li>
+                <strong>Received Message:</strong> AetherWeave captured this incoming webhook event.
+              </li>
+              {totalLatency > 0 && (
+                <li>
+                  <strong>Simulated Lag:</strong> Held for {totalLatency}ms to see if your website handles delayed messages properly.
+                </li>
+              )}
+              {isDuplicated && (
+                <li>
+                  <strong>Double-Delivery Test:</strong> Sent to your website <strong>TWICE</strong> to test if your server accidentally counts votes twice or creates double charges.
+                </li>
+              )}
+              <li>
+                <strong>Your Website Response:</strong> Your website replied with <strong>{overallStatus.toUpperCase()}</strong>.
+              </li>
+            </ul>
+            <div className="pt-1.5 border-t border-cyan-500/20 text-[11px] text-amber-300 font-medium">
+              👉 What to check: Verify on your website that votes/rewards were added only ONCE. If it added twice, your site has a duplicate bug!
+            </div>
+          </div>
+
           {/* Attempts */}
           {event.attempts.length > 0 && (
             <div>
-              <h4 className="text-xs text-slate-500 mb-2 uppercase tracking-wider">Delivery Attempts</h4>
+              <h4 className="text-xs text-slate-500 mb-2 uppercase tracking-wider">Delivery Attempts &amp; Status</h4>
               <div className="space-y-1">
                 {event.attempts.map((attempt) => (
                   <div key={attempt.id} className="flex items-center gap-2 text-xs">

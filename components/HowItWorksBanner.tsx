@@ -31,10 +31,10 @@ export function HowItWorksBanner({ selectedEndpoint }: Props) {
           </div>
           <div>
             <h3 className="text-xs font-bold font-space text-slate-200 tracking-wide uppercase">
-              How AetherWeave Works &bull; Test Any App in 3 Simple Steps
+              How This Works &bull; Test Any Website in 3 Plain English Steps
             </h3>
             <p className="text-[11px] text-slate-400">
-              Universal chaos proxy &amp; idempotency prover for webhooks (Stripe, Paystack, GitHub, Shopify, or Custom APIs)
+              Stress-test your payment webhooks against slow internet, lost connections, and double-payment glitches
             </p>
           </div>
         </div>
@@ -45,11 +45,11 @@ export function HowItWorksBanner({ selectedEndpoint }: Props) {
         >
           {isOpen ? (
             <>
-              Hide Guide <ChevronUp className="w-3.5 h-3.5" />
+              Hide Instructions <ChevronUp className="w-3.5 h-3.5" />
             </>
           ) : (
             <>
-              Show Guide <ChevronDown className="w-3.5 h-3.5" />
+              Show Instructions <ChevronDown className="w-3.5 h-3.5" />
             </>
           )}
         </button>
@@ -65,10 +65,10 @@ export function HowItWorksBanner({ selectedEndpoint }: Props) {
                   <span className="w-5 h-5 rounded-full bg-cyan-500/20 text-cyan-400 text-[10px] font-bold flex items-center justify-center font-mono">
                     1
                   </span>
-                  <span className="text-xs font-semibold text-slate-200">Point Any Webhook Here</span>
+                  <span className="text-xs font-semibold text-slate-200">1. Send a Test Message</span>
                 </div>
                 <p className="text-[11px] text-slate-400 leading-relaxed">
-                  Send webhook events to your AetherWeave Ingress URL. Use the <strong>Live Emitter</strong> above (Stripe, Paystack, GitHub, etc.) or paste this URL into your actual payment provider settings.
+                  Click the <strong>&quot;⚡ Send Test Webhook to Your Website&quot;</strong> button above (supports Stripe, Paystack, GitHub, etc.), or paste your unique test address into your real payment dashboard.
                 </p>
               </div>
               <div className="mt-2.5 pt-2 border-t border-slate-800/60 flex items-center justify-between">
@@ -92,15 +92,15 @@ export function HowItWorksBanner({ selectedEndpoint }: Props) {
                   <span className="w-5 h-5 rounded-full bg-purple-500/20 text-purple-400 text-[10px] font-bold flex items-center justify-center font-mono">
                     2
                   </span>
-                  <span className="text-xs font-semibold text-slate-200">Controlled Chaos Injection</span>
+                  <span className="text-xs font-semibold text-slate-200">2. We Stress-Test It</span>
                 </div>
                 <p className="text-[11px] text-slate-400 leading-relaxed">
-                  AetherWeave immediately returns <strong>202 Accepted</strong> to the sender, then simulates real-world failure modes: <strong>network lag</strong>, <strong>duplicate deliveries</strong>, or <strong>packet drops</strong> based on your endpoint settings.
+                  AetherWeave deliberately <strong>adds delay (lag)</strong> or <strong>sends the notification TWICE</strong> to your website. This mimics real-world network lag and payment provider retries.
                 </p>
               </div>
               <div className="mt-2.5 pt-2 border-t border-slate-800/60 flex items-center gap-2 text-[10px] text-purple-300">
                 <Zap className="w-3 h-3" />
-                <span>Simulates real network instability &amp; retries</span>
+                <span>Simulates real network problems &amp; double-clicks</span>
               </div>
             </div>
 
@@ -110,15 +110,15 @@ export function HowItWorksBanner({ selectedEndpoint }: Props) {
                   <span className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-bold flex items-center justify-center font-mono">
                     3
                   </span>
-                  <span className="text-xs font-semibold text-slate-200">Verify Your App&apos;s Resilience</span>
+                  <span className="text-xs font-semibold text-slate-200">3. Check Your Website</span>
                 </div>
                 <p className="text-[11px] text-slate-400 leading-relaxed">
-                  The event forwards to your app (or our built-in <strong>Target Sink</strong>). The Target Sink proves mathematically whether your system absorbed duplicate deliveries safely without side-effects.
+                  Your website receives both messages. Check your website: Did it add votes or credit the user <strong>only ONCE</strong> (Safe ✅)? Or did it give free extra votes (Bug ❌)?
                 </p>
               </div>
-              <div className="mt-2.5 pt-2 border-t border-slate-800/60 flex items-center gap-2 text-[10px] text-emerald-300">
+              <div className="mt-2.5 pt-2 border-t border-slate-800/60 flex items-center gap-2 text-[10px] text-emerald-300 font-medium">
                 <ShieldCheck className="w-3 h-3" />
-                <span>&Phi;(&Phi;(S, E), E) = &Phi;(S, E) Idempotent</span>
+                <span>Protects you from free double-votes or double-charges</span>
               </div>
             </div>
           </div>

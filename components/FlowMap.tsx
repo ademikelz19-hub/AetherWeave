@@ -18,15 +18,15 @@ export function FlowMap({ endpoint, events }: Props) {
         <div>
           <h2 className="text-base font-bold font-space neon-text-purple flex items-center gap-2">
             <Zap className="w-5 h-5 text-purple-400" />
-            Deterministic Chaos Flow Map
+            Visual Message Route Map
           </h2>
           <p className="text-xs text-slate-400">
-            Real-time topology visualizing webhook interception, state containment, and degraded dispatch
+            Watch how a message travels from the payment provider, through the stress test, to your website
           </p>
         </div>
         <div className="flex items-center gap-2 text-xs">
           <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping inline-block" />
-          <span className="text-slate-300 font-mono">Live Circuit Monitoring</span>
+          <span className="text-slate-300 font-mono">Live Monitoring</span>
         </div>
       </div>
 
@@ -38,14 +38,14 @@ export function FlowMap({ endpoint, events }: Props) {
             <Server className="w-6 h-6" />
           </div>
           <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-            Upstream Provider
+            Step 1: Sender
           </span>
-          <h3 className="text-sm font-bold text-slate-200 mt-1">Stripe / GitHub / Auth</h3>
+          <h3 className="text-sm font-bold text-slate-200 mt-1">Stripe / Paystack / GitHub</h3>
           <p className="text-[11px] text-slate-500 mt-2">
-            Emits arbitrary JSON payloads with cryptographic HMAC signatures
+            Sends payment or event notification as a JSON message
           </p>
-          <div className="mt-4 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[10px] text-emerald-400">
-            Immediate 202 Accepted Handshake
+          <div className="mt-4 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[10px] text-emerald-400 font-medium">
+            Immediate 202 Accepted
           </div>
         </div>
 
@@ -55,28 +55,22 @@ export function FlowMap({ endpoint, events }: Props) {
             <Zap className="w-6 h-6" />
           </div>
           <span className="text-xs font-semibold text-purple-400 uppercase tracking-wider">
-            AetherWeave Vortex
+            Step 2: AetherWeave Stress Filter
           </span>
-          <h3 className="text-sm font-bold neon-text-purple mt-1">Degradation Engine</h3>
+          <h3 className="text-sm font-bold neon-text-purple mt-1">Simulates Network Chaos</h3>
           <div className="mt-3 flex flex-col gap-1.5 w-full text-left">
             <div className="flex justify-between items-center text-[11px] bg-slate-950/60 px-2.5 py-1 rounded border border-slate-800">
-              <span className="text-slate-400">Latency Buffer:</span>
+              <span className="text-slate-400">Added Lag:</span>
               <span className="text-amber-400 font-mono font-bold">+{profile.latencyMs}ms</span>
             </div>
             <div className="flex justify-between items-center text-[11px] bg-slate-950/60 px-2.5 py-1 rounded border border-slate-800">
-              <span className="text-slate-400">Packet Drop Rate:</span>
+              <span className="text-slate-400">Lost Message Rate:</span>
               <span className="text-red-400 font-mono font-bold">{Math.round(profile.dropProb * 100)}%</span>
             </div>
             <div className="flex justify-between items-center text-[11px] bg-slate-950/60 px-2.5 py-1 rounded border border-slate-800">
-              <span className="text-slate-400">Duplication Test:</span>
+              <span className="text-slate-400">Send Twice (Duplicate):</span>
               <span className={profile.duplicate ? "text-purple-400 font-bold" : "text-slate-600"}>
-                {profile.duplicate ? "ACTIVE (2x)" : "DISABLED"}
-              </span>
-            </div>
-            <div className="flex justify-between items-center text-[11px] bg-slate-950/60 px-2.5 py-1 rounded border border-slate-800">
-              <span className="text-slate-400">Sequence Reorder:</span>
-              <span className={profile.scramble ? "text-orange-400 font-bold" : "text-slate-600"}>
-                {profile.scramble ? "ACTIVE" : "DISABLED"}
+                {profile.duplicate ? "ACTIVE (2x)" : "OFF"}
               </span>
             </div>
           </div>
@@ -88,16 +82,16 @@ export function FlowMap({ endpoint, events }: Props) {
             <ShieldCheck className="w-6 h-6" />
           </div>
           <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-            Destination Target
+            Step 3: Your Website
           </span>
-          <h3 className="text-sm font-bold text-slate-200 mt-1 truncate max-w-full">
+          <h3 className="text-sm font-bold text-slate-200 mt-1 truncate max-w-full font-mono text-xs">
             {endpoint.targetUrl}
           </h3>
           <p className="text-[11px] text-slate-500 mt-2">
-            Application under test verified by TestSprite observable assertions
+            Your server receives the message and updates votes/data
           </p>
-          <div className="mt-4 px-2.5 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-[10px] text-cyan-300">
-            Idempotency: $\Phi(\Phi(S,E),E) = \Phi(S,E)$
+          <div className="mt-4 px-2.5 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-[10px] text-cyan-300 font-medium">
+            Must handle duplicates safely
           </div>
         </div>
       </div>

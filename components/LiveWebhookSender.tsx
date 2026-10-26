@@ -233,10 +233,10 @@ export function LiveWebhookSender({ endpoint, onSent }: Props) {
         <div>
           <h3 className="text-base font-bold font-space neon-text-cyan flex items-center gap-2">
             <Send className="w-4 h-4 text-cyan-400" />
-            Live Webhook Emitter & Ingress Simulator
+            Test Webhook Sender (Simulate a Payment or Event)
           </h3>
           <p className="text-xs text-slate-400">
-            Transmit real payloads with cryptographic signatures directly into the AetherWeave vortex
+            Pick a payment provider below and send a test message through AetherWeave to your website
           </p>
         </div>
 
@@ -251,7 +251,7 @@ export function LiveWebhookSender({ endpoint, onSent }: Props) {
                   : "text-slate-400 hover:text-slate-200"
               }`}
             >
-              {tmpl.name.split(":")[0]}
+              {tmpl.name}
             </button>
           ))}
         </div>
@@ -261,14 +261,14 @@ export function LiveWebhookSender({ endpoint, onSent }: Props) {
       <div className="flex items-center justify-between text-xs p-3 rounded-lg bg-slate-950/50 border border-slate-800/80">
         <div className="flex items-center gap-2 truncate">
           <Shield className="w-4 h-4 text-purple-400 flex-shrink-0" />
-          <span className="text-slate-400">Ingress Target:</span>
+          <span className="text-slate-400">Testing Through:</span>
           <span className="font-mono text-cyan-300 truncate">
-            {endpoint ? `/api/ingest/${endpoint.id}` : "No endpoint selected"}
+            {endpoint ? `/api/ingest/${endpoint.id}` : "No app selected"}
           </span>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
-          <span className="text-slate-500">Destination:</span>
-          <span className="font-mono text-slate-300 truncate max-w-xs">
+          <span className="text-slate-400 font-semibold">Your Target Website:</span>
+          <span className="font-mono text-emerald-400 truncate max-w-xs font-medium">
             {endpoint?.targetUrl ?? "N/A"}
           </span>
         </div>
@@ -340,7 +340,7 @@ export function LiveWebhookSender({ endpoint, onSent }: Props) {
           className="btn-primary w-full sm:w-auto px-6 py-2.5 flex items-center justify-center gap-2 text-sm shadow-[0_0_15px_rgba(6,182,212,0.3)]"
         >
           <Zap className="w-4 h-4" />
-          {isSending ? "Transmitting..." : "⚡ Transmit Live Webhook into Vortex"}
+          {isSending ? "Sending to your site..." : "⚡ Send Test Webhook to Your Website"}
         </button>
 
         {responseLog && (
